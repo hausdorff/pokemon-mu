@@ -50,19 +50,7 @@ instance Read MapSqr where
     readsPrec _ " " = [(Ground, "")]
 
 data Point = Point Int Int MapSqr
-instance Eq Point where
-    (==) pt1@(Point x1 y1 sqr1) pt2@(Point x2 y2 sqr2) = xeq && yeq && sqreq
-        where xeq   = x1 == x2
-              yeq   = y1 == y2
-              sqreq = sqr1 == sqr2
-instance Ord Point where
-    compare pt1 pt2 = case (xcmp, ycmp, sqrcmp) of
-        (EQ, EQ, _) -> sqrcmp
-        (EQ, _, _)  -> ycmp
-        (_, _, _)   -> xcmp
-        where xcmp   = compare (x pt1) (x pt2)
-              ycmp   = compare (y pt1) (y pt2)
-              sqrcmp = compare (sqr pt1) (sqr pt2)
+    deriving (Eq, Ord)
 instance Show Point where
     show point = show $ sqr point
 
@@ -115,7 +103,6 @@ indexed xs = zip [0..] xs
 revindexed :: [a] -> [(Int, a)]
 revindexed xs = zip indexes xs
     where indexes = reverse $ take (length xs) [0..]
-
 
 charToSqr :: Char -> MapSqr
 charToSqr c = read [c]
