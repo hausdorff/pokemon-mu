@@ -112,6 +112,11 @@ neighborEdges points x y = Maybe.catMaybes neighbors
 indexed :: [a] -> [(Int, a)]
 indexed xs = zip [0..] xs
 
+revindexed :: [a] -> [(Int, a)]
+revindexed xs = zip indexes xs
+    where indexes = reverse $ take (length xs) [0..]
+
+
 charToSqr :: Char -> MapSqr
 charToSqr c = read [c]
 
@@ -152,7 +157,9 @@ edgeToDotEdge (Edge p1 p2 t) =
           pointId1       = concat ["\"(", x1, ",", y1, ")\""]
           pointId2       = concat ["\"(", x2, ",", y2, ")\""]
 
-pointToDotNode point@(Point x y sqr) =
+
+pointToDot :: Point -> String
+pointToDot point@(Point x y sqr) =
     concat ["    ", pointId, " [", shape, " ", label, " ", pos, " ", fillcolor, "];"]
     where (x', y', sqr') = (show x, show y, show sqr)
           pointId        = concat ["\"(", x', ",", y', ")\""]
@@ -176,7 +183,7 @@ makeMap rows = Map { points      = as2dVect
                  }
     where mkPt x y c           = Point x y (charToSqr c)
           rowToPoints (y, row) = V.fromList $ map (\(x, c) -> mkPt x y c) (indexed row)
-          as2dVect             = V.fromList $ map rowToPoints (indexed rows)
+          as2dVect             = V.fromList $ map rowToPoints (revindexed rows)
 
 testM = makeMap ["####",
                  "# E#",
