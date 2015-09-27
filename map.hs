@@ -13,50 +13,48 @@ import qualified Data.Vector as V
 -- Map data types --
 --------------------
 
--- Get a point.
--- Get one of the edges going in, and loop through the outgoing edges.
--- For each of these, check:
---   * if the outgoing edge is going back to the original point; if so, we should cat the ingoing edge with the self-loops on that node and the outgoing edge, and star it all. Then put that on the in-edge node.
---   * if the outgoing edge is going to a different node, cat the in edge, the self-loops, and the out-edge. Put that on the in-edge node.
+data MapSqr = Entrance | Exit | Wall | Grass | Ground
+    deriving (Eq, Ord)
 
-type Grid = V.Vector (V.Vector Point)
-
-data Map = Map { points        :: Grid
-               , outgoingEdges :: AdjacencyMap
-               , incomingEdges :: AdjacencyMap
-               }
-instance Show Map where
-    show (Map rows _ _) = unlines $ V.toList (V.map convertRow rows)
-        where convertRow = map pointToChar . V.toList
+data Point = Point Int Int MapSqr
+    deriving (Eq, Ord)
 
 data Transition = Up | Down | Left | Right | A | B | Select | Start
     deriving (Show)
 
 data Edge = Edge Point Point Transition
 
+type Grid = V.Vector (V.Vector Point)
+
 type AdjacencyMap = M.Map Point [Edge]
 
-data MapSqr = Entrance | Exit | Wall | Grass | Ground
-    deriving (Eq, Ord)
+data Map = Map { points        :: Grid
+               , outgoingEdges :: AdjacencyMap
+               , incomingEdges :: AdjacencyMap
+               }
+
+------------------------------
+-- Show/Read code for types --
+------------------------------
+
 instance Show MapSqr where
     show Entrance = "S"
     show Exit     = "E"
     show Wall     = "#"
     show Ground   = " "
+
 instance Read MapSqr where
     readsPrec _ "S" = [(Entrance, "")]
     readsPrec _ "E" = [(Exit, "")]
     readsPrec _ "#" = [(Wall, "")]
     readsPrec _ " " = [(Ground, "")]
 
-data Point = Point Int Int MapSqr
-    deriving (Eq, Ord)
 instance Show Point where
     show point = show $ sqr point
 
-x (Point x _ _) = x
-y (Point _ y _) = y
-sqr (Point _ _ sqr) = sqr
+instance Show Map where
+    show (Map rows _ _) = unlines $ V.toList (V.map convertRow rows)
+        where convertRow = map pointToChar . V.toList
 
 -----------------------
 -- Utility functions --
@@ -114,6 +112,12 @@ sqrToChar s = case (show s) of
 pointToChar :: Point -> Char
 pointToChar p = case (show p) of
     [c] -> c
+
+
+x (Point x _ _) = x
+y (Point _ y _) = y
+sqr (Point _ _ sqr) = sqr
+
 
 -----------------
 -- Graph utils --
