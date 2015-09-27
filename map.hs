@@ -152,18 +152,19 @@ edgeToDotEdge (Edge p1 p2 t) =
           pointId1       = concat ["\"(", x1, ",", y1, ")\""]
           pointId2       = concat ["\"(", x2, ",", y2, ")\""]
 
-pointToDotNode point =
+pointToDotNode point@(Point x y sqr) =
     concat ["    ", pointId, " [", shape, " ", label, " ", pos, " ", fillcolor, "];"]
-    where (x', y', sqr') = (show $ x point, show $ y point, show $ sqr point)
-          pointId     = concat ["\"(", x', ",", y', ")\""]
-          shape       = "shape=circle"
-          label       = concat ["label=\"", sqr', "\\n(", x', ",", y', ")\""]
-          pos         = concat ["pos=\"", show $ 2*(x point), ",", show $ 2*(y point), "!\""]
-          fillcolor   = case (sqr point) of
-              Wall -> "style=\"filled\" fillcolor=palegreen"
+    where (x', y', sqr') = (show x, show y, show sqr)
+          pointId        = concat ["\"(", x', ",", y', ")\""]
+          shape          = "shape=circle"
+          label          = concat ["label=\"", sqr', "\\n(", x', ",", y', ")\""]
+          (posx, posy)   = (show $ 2*x, show $ 2*y)
+          pos            = concat ["pos=\"", posx, ",", posy, "!\""]
+          fillcolor      = case sqr of
+              Wall     -> "style=\"filled\" fillcolor=palegreen"
               Entrance -> "style=\"filled\" fillcolor=yellow"
-              Exit -> "style=\"filled\" fillcolor=red"
-              _    -> "fillcolor=white"
+              Exit     -> "style=\"filled\" fillcolor=red"
+              _        -> "fillcolor=white"
 
 ---------------
 -- Map tests --
