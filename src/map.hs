@@ -13,10 +13,10 @@ import qualified Data.Vector as V
 -- Map data types --
 --------------------
 
-data MapSqr = Entrance | Exit | Wall | Grass | Ground
+data MapSquare = Entrance | Exit | Wall | Grass | Ground
     deriving (Eq, Ord)
 
-data Point = Point Int Int MapSqr
+data Point = Point Int Int MapSquare
     deriving (Eq, Ord)
 
 data Transition = Up | Down | Left | Right | A | B | Select | Start
@@ -37,13 +37,13 @@ data Map = Map { points        :: Grid
 -- Show/Read code for types --
 ------------------------------
 
-instance Show MapSqr where
+instance Show MapSquare where
     show Entrance = "S"
     show Exit     = "E"
     show Wall     = "#"
     show Ground   = " "
 
-instance Read MapSqr where
+instance Read MapSquare where
     readsPrec _ "S" = [(Entrance, "")]
     readsPrec _ "E" = [(Exit, "")]
     readsPrec _ "#" = [(Wall, "")]
@@ -102,10 +102,10 @@ revindexed :: [a] -> [(Int, a)]
 revindexed xs = zip indexes xs
     where indexes = reverse $ take (length xs) [0..]
 
-charToSqr :: Char -> MapSqr
+charToSqr :: Char -> MapSquare
 charToSqr c = read [c]
 
-sqrToChar :: MapSqr -> Char
+sqrToChar :: MapSquare -> Char
 sqrToChar s = case (show s) of
     [c] -> c
 
