@@ -132,25 +132,29 @@ pointToChar p = case (show p) of
 -- Graph utils --
 -----------------
 
-toGraph (Map points outgoingEdges _) = do
-    putStrLn "digraph map {"
-    V.forM_
-        points
-        (\row ->
-            V.forM_
-                row
-                (printOutgoingEdges outgoingEdges))
-    putStrLn "}"
+writeDot :: FilePath -> Map -> IO ()
+writeDot filename map = writeFile filename $ toDot map 
 
-printOutgoingEdges :: EdgeMap -> Point -> IO ()
-printOutgoingEdges outgoing point = do
-    putStrLn $ pointToDotNode point
-    CM.forM_
-        edges
-        (putStrLn . edgeToDotEdge)
-    where edges = outgoing M.! point
+toDot :: Map -> String
+toDot (Map points outgoingEdges _) =
+    let dotEdges = do
+        row <- V.toList points
+        point <- V.toList row
+        let node = pointToDot point
+        node:(outgoingEdgesToDot outgoingEdges point)
+    in unlines $ concat [["digraph map {"], dotEdges, ["}"]]
 
-edgeToDotEdge (Edge p1 p2 t) =
+-- Convert outgoing edges at a point to a list of dotfile definitions of those
+-- edges.
+outgoingEdgesToDot :: EdgeMap -> Point -> [String]
+outgoingEdgesToDot outgoing point = do
+    let edges = outgoing M.! point
+    edge <- edges
+    return $ edgeToDot edge
+
+-- Convert edge to a dotfile representation of that edge.
+edgeToDot :: Edge -> String
+edgeToDot (Edge p1 p2 t) =
     concat ["    ", pointId1, " -> ", pointId2, ";"]
     where (x1, y1, sqr1) = (show $ x p1, show $ y p1, show $ sqr p1)
           (x2, y2, sqr2) = (show $ x p2, show $ y p2, show $ sqr p2)
