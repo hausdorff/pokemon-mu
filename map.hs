@@ -1,6 +1,7 @@
 module Map where
 
 import Prelude hiding (Left, Right)
+import qualified Control.Monad as CM
 import qualified Data.List as L
 import qualified Data.Map as M
 import qualified Data.Maybe as Maybe
@@ -127,10 +128,42 @@ pointToChar p = case (show p) of
 -----------------
 
 toGraph (Map points outgoingEdges _) = do
-    putStrLn "graph map {"
+    putStrLn "digraph map {"
+    V.forM_
+        points
+        (\row ->
+            V.forM_
+                row
+                (printOutgoingEdges outgoingEdges))
     putStrLn "}"
 
+printOutgoingEdges :: EdgeMap -> Point -> IO ()
+printOutgoingEdges outgoing point = do
+    putStrLn $ pointToDotNode point
+    CM.forM_
+        edges
+        (putStrLn . edgeToDotEdge)
+    where edges = outgoing M.! point
 
+edgeToDotEdge (Edge p1 p2 t) =
+    concat ["    ", pointId1, " -> ", pointId2, ";"]
+    where (x1, y1, sqr1) = (show $ x p1, show $ y p1, show $ sqr p1)
+          (x2, y2, sqr2) = (show $ x p2, show $ y p2, show $ sqr p2)
+          pointId1       = concat ["\"(", x1, ",", y1, ")\""]
+          pointId2       = concat ["\"(", x2, ",", y2, ")\""]
+
+pointToDotNode point =
+    concat ["    ", pointId, " [", shape, " ", label, " ", pos, " ", fillcolor, "];"]
+    where (x', y', sqr') = (show $ x point, show $ y point, show $ sqr point)
+          pointId     = concat ["\"(", x', ",", y', ")\""]
+          shape       = "shape=circle"
+          label       = concat ["label=\"", sqr', "\\n(", x', ",", y', ")\""]
+          pos         = concat ["pos=\"", show $ 2*(x point), ",", show $ 2*(y point), "!\""]
+          fillcolor   = case (sqr point) of
+              Wall -> "style=\"filled\" fillcolor=palegreen"
+              Entrance -> "style=\"filled\" fillcolor=yellow"
+              Exit -> "style=\"filled\" fillcolor=red"
+              _    -> "fillcolor=white"
 
 ---------------
 -- Map tests --
@@ -145,6 +178,6 @@ makeMap rows = Map { points      = as2dVect
           as2dVect             = V.fromList $ map rowToPoints (indexed rows)
 
 testM = makeMap ["####",
-               "# E#",
-               "#S #",
-               "####"]
+                 "# E#",
+                 "#S #",
+                 "####"]
