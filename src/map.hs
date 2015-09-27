@@ -95,6 +95,10 @@ neighborEdges points x y = Maybe.catMaybes neighbors
     where directions = [Up, Down, Left, Right]
           neighbors  = map (getEdge points x y) directions
 
+----------------------
+-- Helper functions --
+----------------------
+
 indexed :: [a] -> [(Int, a)]
 indexed xs = zip [0..] xs
 
