@@ -22,8 +22,8 @@ import qualified Data.Vector as V
 type Grid = V.Vector (V.Vector Point)
 
 data Map = Map { points        :: Grid
-               , outgoingEdges :: EdgeMap
-               , incomingEdges :: EdgeMap
+               , outgoingEdges :: AdjacencyMap
+               , incomingEdges :: AdjacencyMap
                }
 instance Show Map where
     show (Map rows _ _) = unlines $ V.toList (V.map convertRow rows)
@@ -34,7 +34,7 @@ data Transition = Up | Down | Left | Right | A | B | Select | Start
 
 data Edge = Edge Point Point Transition
 
-type EdgeMap = M.Map Point [Edge]
+type AdjacencyMap = M.Map Point [Edge]
 
 data MapSqr = Entrance | Exit | Wall | Grass | Ground
     deriving (Eq, Ord)
@@ -74,13 +74,13 @@ sqr (Point _ _ sqr) = sqr
 -- Utility functions --
 -----------------------
 
-makeOutgoingEdges :: Grid -> EdgeMap
+makeOutgoingEdges :: Grid -> AdjacencyMap
 makeOutgoingEdges points = V.foldl processRow M.empty points
     where processRow acc row     = V.foldl processPoint acc row
           processPoint map point = M.insert point edges map
               where edges = (neighborEdges points (x point) (y point))
 
-makeIncomingEdges :: Grid -> EdgeMap
+makeIncomingEdges :: Grid -> AdjacencyMap
 makeIncomingEdges points = M.empty
  
 getPoint :: Grid -> Int -> Int -> Maybe Point
@@ -146,7 +146,7 @@ toDot (Map points outgoingEdges _) =
 
 -- Convert outgoing edges at a point to a list of dotfile definitions of those
 -- edges.
-outgoingEdgesToDot :: EdgeMap -> Point -> [String]
+outgoingEdgesToDot :: AdjacencyMap -> Point -> [String]
 outgoingEdgesToDot outgoing point = do
     let edges = outgoing M.! point
     edge <- edges
