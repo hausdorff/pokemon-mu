@@ -9,8 +9,10 @@ import Edgeset
 import Grid
 import MapSquare
 import Point
+import Row
 import Transition
 
+import Prelude hiding (foldl)
 import qualified Data.Map as M
 import qualified Data.Vector as V
 
@@ -26,30 +28,28 @@ data Map = Map { points        :: Grid
                }
 
 instance Show Map where
-    show (Map rows _ _) = unlines $ V.toList (V.map convertRow rows)
-        where convertRow = map Point.toChar . V.toList
+    show (Map grid _ _) = show grid
 
 ----------------------
 -- Public functions --
 ----------------------
 
-makeMap rows = Map { points      = as2dVect
-                 , outgoingEdges = makeOutgoingEdges as2dVect
-                 , incomingEdges = makeIncomingEdges as2dVect
+makeMap :: [String] -> Map
+makeMap rows = Map { points      = grid
+                 , outgoingEdges = makeOutgoingEdges grid
+                 , incomingEdges = makeIncomingEdges grid
                  }
-    where mkPt x y c           = Point x y (fromChar c)
-          rowToPoints (y, row) = V.fromList $ map (\(x, c) -> mkPt x y c) (indexed row)
-          as2dVect             = V.fromList $ map rowToPoints (revindexed rows)
+    where grid = Grid.makeGrid rows
 
 -----------------------
 -- Utility functions --
 -----------------------
 
 makeOutgoingEdges :: Grid -> AdjacencyMap
-makeOutgoingEdges points = V.foldl processRow M.empty points
-    where processRow acc row  = V.foldl processPoint acc row
+makeOutgoingEdges points = Grid.foldl processRow M.empty points
+    where processRow acc row = Row.foldl processPoint acc row
           processPoint map point@(Point x y _) = M.insert point edges map
-              where edges = fromList (neighborEdges points x y)
+              where edges = Edgeset.fromList (neighborEdges points x y)
 
 makeIncomingEdges :: Grid -> AdjacencyMap
 makeIncomingEdges points = M.empty
@@ -57,13 +57,6 @@ makeIncomingEdges points = M.empty
 ----------------------
 -- Helper functions --
 ----------------------
-
-indexed :: [a] -> [(Int, a)]
-indexed xs = zip [0..] xs
-
-revindexed :: [a] -> [(Int, a)]
-revindexed xs = zip indexes xs
-    where indexes = reverse $ take (length xs) [0..]
 
 x (Point x _ _) = x
 y (Point _ y _) = y

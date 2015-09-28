@@ -5,9 +5,11 @@ module Dot (
 
 import Edge
 import Edgeset
+import Grid
 import Map
 import MapSquare
 import Point
+import Row
 
 import qualified Data.Map as M
 import qualified Data.Vector as V
@@ -28,8 +30,8 @@ writeDot filename map = writeFile filename $ toDot map
 toDot :: Map -> String
 toDot (Map points outgoingEdges _) =
     let dotEdges = do
-        row <- V.toList points
-        point@(Point x y _) <- V.toList row
+        row <- Grid.toList points
+        point@(Point x y _) <- Row.toList row
         let node = pointToDot point
         node:(outgoingEdgesToDot outgoingEdges point)
     in unlines $ concat [["digraph map {"], dotEdges, ["}"]]
@@ -43,7 +45,7 @@ toDot (Map points outgoingEdges _) =
 outgoingEdgesToDot :: AdjacencyMap -> Point -> [String]
 outgoingEdgesToDot outgoing point = do
     let edges = outgoing M.! point
-    edge <- toList edges
+    edge <- Edgeset.toList edges
     return $ edgeToDot edge
 
 -- Convert edge to a dotfile representation of that edge.
