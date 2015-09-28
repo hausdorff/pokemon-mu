@@ -1,5 +1,7 @@
 module Map where
 
+import Transition
+
 import Prelude hiding (Left, Right)
 import qualified Control.Monad as CM
 import qualified Data.List as L
@@ -18,9 +20,6 @@ data MapSquare = Entrance | Exit | Wall | Grass | Ground
 
 data Point = Point Int Int MapSquare
     deriving (Eq, Ord)
-
-data Transition = Up | Down | Left | Right | A | B | Select | Start
-    deriving (Show)
 
 data Edge = Edge Point Point Transition
 
