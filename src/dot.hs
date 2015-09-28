@@ -3,6 +3,7 @@ module Dot (
     , toDot
     ) where
 
+import AdjacencyMap
 import Edge
 import Edgeset
 import Grid
@@ -44,7 +45,7 @@ toDot (Map points outgoingEdges _) =
 -- edges.
 outgoingEdgesToDot :: AdjacencyMap -> Point -> [String]
 outgoingEdgesToDot outgoing point = do
-    let edges = outgoing M.! point
+    let edges = outgoing AdjacencyMap.! point
     edge <- Edgeset.toList edges
     return $ edgeToDot edge
 

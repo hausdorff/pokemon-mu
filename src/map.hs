@@ -1,9 +1,10 @@
 module Map (
       Map(..)
-    , AdjacencyMap(..)
+    , AdjacencyMap
     , makeMap
     ) where
 
+import AdjacencyMap
 import Edge
 import Edgeset
 import Grid
@@ -20,8 +21,6 @@ import qualified Data.Vector as V
 -- Map data types --
 --------------------
 
-type AdjacencyMap = M.Map Point Edgeset
-
 data Map = Map { points        :: Grid
                , outgoingEdges :: AdjacencyMap
                , incomingEdges :: AdjacencyMap
@@ -35,7 +34,7 @@ instance Show Map where
 ----------------------
 
 makeMap :: [String] -> Map
-makeMap rows = Map { points      = grid
+makeMap rows = Map {points      = grid
                  , outgoingEdges = makeOutgoingEdges grid
                  , incomingEdges = makeIncomingEdges grid
                  }
@@ -46,13 +45,13 @@ makeMap rows = Map { points      = grid
 -----------------------
 
 makeOutgoingEdges :: Grid -> AdjacencyMap
-makeOutgoingEdges points = Grid.foldl processRow M.empty points
-    where processRow acc row = Row.foldl processPoint acc row
-          processPoint map point@(Point x y _) = M.insert point edges map
+makeOutgoingEdges points = Grid.foldl processRow AdjacencyMap.empty points
+    where processRow accMap row = Row.foldl processPoint accMap row
+          processPoint map point@(Point x y _) = insert point edges map
               where edges = Edgeset.fromList (neighborEdges points x y)
 
 makeIncomingEdges :: Grid -> AdjacencyMap
-makeIncomingEdges points = M.empty
+makeIncomingEdges points = AdjacencyMap.empty
 
 ----------------------
 -- Helper functions --
