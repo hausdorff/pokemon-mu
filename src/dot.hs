@@ -1,6 +1,13 @@
-module Dot (writeDot, toDot) where
+module Dot (
+      writeDot
+    , toDot
+    ) where
 
+import Edge
+import Edgeset
 import Map
+import MapSquare
+import Point
 
 import qualified Data.Map as M
 import qualified Data.Vector as V
@@ -22,7 +29,7 @@ toDot :: Map -> String
 toDot (Map points outgoingEdges _) =
     let dotEdges = do
         row <- V.toList points
-        point <- V.toList row
+        point@(Point x y _) <- V.toList row
         let node = pointToDot point
         node:(outgoingEdgesToDot outgoingEdges point)
     in unlines $ concat [["digraph map {"], dotEdges, ["}"]]
@@ -36,17 +43,15 @@ toDot (Map points outgoingEdges _) =
 outgoingEdgesToDot :: AdjacencyMap -> Point -> [String]
 outgoingEdgesToDot outgoing point = do
     let edges = outgoing M.! point
-    edge <- edges
+    edge <- toList edges
     return $ edgeToDot edge
 
 -- Convert edge to a dotfile representation of that edge.
 edgeToDot :: Edge -> String
-edgeToDot (Edge p1 p2 t) =
+edgeToDot (Edge (Point x1 y1 sqr1) (Point x2 y2 sqr2) t) =
     concat ["    ", pointId1, " -> ", pointId2, ";"]
-    where (x1, y1, sqr1) = (show $ x p1, show $ y p1, show $ sqr p1)
-          (x2, y2, sqr2) = (show $ x p2, show $ y p2, show $ sqr p2)
-          pointId1       = concat ["\"(", x1, ",", y1, ")\""]
-          pointId2       = concat ["\"(", x2, ",", y2, ")\""]
+    where pointId1 = concat ["\"(", show x1, ",", show y1, ")\""]
+          pointId2 = concat ["\"(", show x2, ",", show y2, ")\""]
 
 -- Creates a dotfile definition of a node (e.g., generates a position, size,
 -- color, etc., for the node when we render it with Graphviz). 

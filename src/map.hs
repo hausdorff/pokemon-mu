@@ -5,6 +5,7 @@ module Map (
     ) where
 
 import Edge
+import Edgeset
 import Grid
 import MapSquare
 import Point
@@ -17,16 +18,12 @@ import qualified Data.Vector as V
 -- Map data types --
 --------------------
 
-type AdjacencyMap = M.Map Point [Edge]
+type AdjacencyMap = M.Map Point Edgeset
 
 data Map = Map { points        :: Grid
                , outgoingEdges :: AdjacencyMap
                , incomingEdges :: AdjacencyMap
                }
-
-------------------------------
--- Show/Read code for types --
-------------------------------
 
 instance Show Map where
     show (Map rows _ _) = unlines $ V.toList (V.map convertRow rows)
@@ -50,9 +47,9 @@ makeMap rows = Map { points      = as2dVect
 
 makeOutgoingEdges :: Grid -> AdjacencyMap
 makeOutgoingEdges points = V.foldl processRow M.empty points
-    where processRow acc row     = V.foldl processPoint acc row
-          processPoint map point = M.insert point edges map
-              where edges = (neighborEdges points (x point) (y point))
+    where processRow acc row  = V.foldl processPoint acc row
+          processPoint map point@(Point x y _) = M.insert point edges map
+              where edges = fromList (neighborEdges points x y)
 
 makeIncomingEdges :: Grid -> AdjacencyMap
 makeIncomingEdges points = M.empty

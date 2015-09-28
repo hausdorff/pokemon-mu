@@ -6,6 +6,7 @@ module Grid (
     ) where
 
 import Edge
+import Edgeset
 import Point
 import Transition
 
