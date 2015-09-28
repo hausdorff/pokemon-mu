@@ -49,9 +49,11 @@ outgoingEdgesToDot outgoing point = do
 -- Convert edge to a dotfile representation of that edge.
 edgeToDot :: Edge -> String
 edgeToDot (Edge (Point x1 y1 sqr1) (Point x2 y2 sqr2) t) =
-    concat ["    ", pointId1, " -> ", pointId2, ";"]
+    concat ["    ", pointId1, " -> ", pointId2, " [", label, color, "];"]
     where pointId1 = concat ["\"(", show x1, ",", show y1, ")\""]
           pointId2 = concat ["\"(", show x2, ",", show y2, ")\""]
+          label    = concat ["label=\"", show t, "\""]
+          color    = " fontcolor=blue"
 
 -- Creates a dotfile definition of a node (e.g., generates a position, size,
 -- color, etc., for the node when we render it with Graphviz). 
