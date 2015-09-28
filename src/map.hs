@@ -52,10 +52,3 @@ makeOutgoingEdges points = Grid.foldl processRow AdjacencyMap.empty points
 
 makeIncomingEdges :: Grid -> AdjacencyMap
 makeIncomingEdges points = AdjacencyMap.empty
-
-----------------------
--- Helper functions --
-----------------------
-
-x (Point x _ _) = x
-y (Point _ y _) = y
