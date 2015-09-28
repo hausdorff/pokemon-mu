@@ -26,7 +26,7 @@ empty = Edgeset M.empty
 
 unify :: Edgeset -> Edge -> Edgeset
 unify set e@(Edge p1 p2 trans) = case (lookup key set) of
-    Nothing -> insert key e set
+    Nothing                -> insert key e set
     Just (Edge _ _ trans') -> insert key newEdge set
         where newEdge = Edge p1 p2 (trans <|> trans')
     where key = makeKey e

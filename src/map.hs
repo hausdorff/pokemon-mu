@@ -34,10 +34,10 @@ instance Show Map where
 ----------------------
 
 makeMap :: [String] -> Map
-makeMap rows = Map {points      = grid
-                 , outgoingEdges = makeOutgoingEdges grid
-                 , incomingEdges = makeIncomingEdges grid
-                 }
+makeMap rows = Map { points        = grid
+                   , outgoingEdges = makeOutgoingEdges grid
+                   , incomingEdges = makeIncomingEdges grid
+                   }
     where grid = Grid.makeGrid rows
 
 -----------------------
@@ -46,7 +46,7 @@ makeMap rows = Map {points      = grid
 
 makeOutgoingEdges :: Grid -> AdjacencyMap
 makeOutgoingEdges points = Grid.foldl processRow AdjacencyMap.empty points
-    where processRow accMap row = Row.foldl processPoint accMap row
+    where processRow accMap row                = Row.foldl processPoint accMap row
           processPoint map point@(Point x y _) = insert point edges map
               where edges = Edgeset.fromList (neighborEdges points x y)
 
