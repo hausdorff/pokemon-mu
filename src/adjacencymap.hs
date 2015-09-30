@@ -10,7 +10,15 @@ import Point
 
 import qualified Data.Map as M
 
+----------------
+-- Data types --
+----------------
+
 newtype AdjacencyMap = AdjacencyMap (M.Map Point Edgeset)
+
+----------------
+-- Public API --
+----------------
 
 empty :: AdjacencyMap
 empty = AdjacencyMap M.empty
