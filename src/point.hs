@@ -1,6 +1,7 @@
 module Point (
       Point(..)
     , toChar
+    , getMapSquare
     )where
 
 import MapSquare hiding (toChar)
@@ -14,3 +15,6 @@ instance Show Point where
 toChar :: Point -> Char
 toChar p = case (show p) of
     [c] -> c
+
+getMapSquare :: Point -> MapSquare
+getMapSquare (Point _ _ square) = square

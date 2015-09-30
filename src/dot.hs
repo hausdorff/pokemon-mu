@@ -29,7 +29,7 @@ writeDot filename map = writeFile filename $ toDot map
 -- written to a file, this definition can then be used (e.g.) to generate a PDF
 -- with a nice visualization of the graph of the map.
 toDot :: Map -> String
-toDot (Map points outgoingEdges _) =
+toDot (Map _ _ points outgoingEdges _) =
     let dotEdges = do
         row <- Grid.toList points
         point@(Point x y _) <- Row.toList row
