@@ -1,7 +1,7 @@
 module AdjacencyMap (
       AdjacencyMap
     , AdjacencyMap.empty
-    , insert
+    , AdjacencyMap.insert
     , (!)
     ) where
 
