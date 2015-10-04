@@ -7,6 +7,7 @@ import AdjacencyMap
 import Edge
 import Edgeset
 import Grid
+import Index
 import Map
 import MapSquare
 import Point
@@ -46,7 +47,7 @@ toDot (Map _ _ points outgoingEdges _) =
 outgoingEdgesToDot :: AdjacencyMap -> Point -> [String]
 outgoingEdgesToDot outgoing point = do
     let edges = outgoing AdjacencyMap.! point
-    edge <- Edgeset.toList edges
+    edge <- Index.toList edges
     return $ edgeToDot edge
 
 -- Convert edge to a dotfile representation of that edge.

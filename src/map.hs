@@ -9,12 +9,14 @@ import AdjacencyMap
 import Edge
 import Edgeset
 import Grid
+import qualified Index as I
 import MapSquare
 import Point
 import Row
 import Transition
 
 import Prelude hiding (foldl)
+import qualified Data.List as L
 import qualified Data.Map as M
 import qualified Data.Vector as V
 
@@ -66,7 +68,6 @@ makeEnd grid = case filteredPoints of
     where isEnd point = (Point.getMapSquare point) == Exit
           filteredPoints = filter isEnd $ allPoints grid 
 
-
 allPoints :: Grid -> [Point]
 allPoints grid = concat $ map Row.toList $ Grid.toList grid
 
@@ -78,5 +79,5 @@ makeInEdges grid = makeEdges adjacentInEdges grid
 
 makeEdges edgeGenerator points = Grid.foldl processRow AdjacencyMap.empty points
     where processRow accMap row                 = Row.foldl processPoint accMap row
-          processPoint amap point@(Point x y _) = insert point edges amap
+          processPoint amap point@(Point x y _) = AdjacencyMap.insert point edges amap
               where edges = Edgeset.fromList (edgeGenerator points x y)
